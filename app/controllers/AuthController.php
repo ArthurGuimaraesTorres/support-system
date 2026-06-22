@@ -1,7 +1,6 @@
 <?php
 
-    require __DIR__ . '/../models/User.php';
-    require __DIR__ . '/../../config/database.php';
+    require_once __DIR__ . '/../models/User.php';
 
     class AuthController
     {
@@ -44,8 +43,9 @@
 
             $user = $this->userModel->findByEmail($email);
             if ($user && password_verify($password, $user['password'])) {
-                session_start();
                 $_SESSION['user_id'] = $user['id'];
+                $_SESSION['name'] = $user['name'];
+
                 header('Location: ?page=home');
                 exit;
             } else {

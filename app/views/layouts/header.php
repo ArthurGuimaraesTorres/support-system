@@ -17,13 +17,21 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav gap-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="?page=track_ticket">Acompanhar meu Chamado</a>
+                            <a class="btn btn-light text-primary fw-semibold" href="?page=create_ticket"><i class="bi bi-plus-circle me-2"></i>Criar Chamado</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-light text-primary fw-semibold" href="?page=track_tickets"><i class="bi bi-search me-2"></i>Acompanhar meu Chamado</a>
                         </li>
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
+                        <div class="nav-item d-flex align-items-center me-3">
+                            <div class="nav-link">
+                                <?= htmlspecialchars($_SESSION["name"] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                            </div>
+                        </div>
                         <li class="nav-item dropdown">
                             <button
                                 class="btn nav-link dropdown-toggle"

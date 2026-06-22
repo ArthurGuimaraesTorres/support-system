@@ -25,4 +25,16 @@
             ]);
             return $this->pdo->lastInsertId();
         }
+
+        public function findByIdAndUser(int $ticketId, int $userId): ?array
+        {
+            $sql = "SELECT * FROM tickets WHERE id = :id AND user_id = :user_id";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':id' => $ticketId,
+                ':user_id' => $userId
+            ]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
     }

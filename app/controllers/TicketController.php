@@ -77,4 +77,29 @@
                 exit;
             }
         }
+
+        public function showTrack(): void
+        {
+            $this->requireAuthentication();
+
+            $ticket = null;
+            $error = null;
+            $ticketId = $_GET['ticket_id'] ?? '';
+
+            if ($ticketId !== '') {
+                if (
+                    filter_var($ticketId, FILTER_VALIDATE_INT) === false || (int)$ticketId <= 0
+                ) {
+                    $error = 'Informe um ID de ticket válido.';
+                } else {
+                    $ticket = $this->ticketModel->findByIdAndUser((int)$ticketId, (int)$_SESSION['user_id']);
+
+                    if (!$ticket) {
+                        $error = "Ticket não encontrado ou você não tem permissão para visualizá-lo.";
+                    }
+                }
+            }
+
+            require __DIR__ . '/../views/tickets/track.php';
+        }
     }
