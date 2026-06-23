@@ -1,7 +1,50 @@
-<?php require __DIR__ ."/../layouts/header.php"; ?>
+<?php 
+
+    require __DIR__ ."/../layouts/header.php"; 
+
+    $categoryLabels = [
+        'bug' => 'Bug',
+        'hardware'=> 'Hardware',
+        'network' => 'Rede',
+        'other' => 'Outros',
+    ];
+
+    $priorityLabels = [
+        'low' => 'Baixa',
+        'medium' => 'Média',
+        'high' => 'Alta',
+    ];
+
+    $statusLabels = [
+        'open' => 'Aberto',
+        'in-progress' => 'Em andamento',
+        'resolved' => 'Resolvido',
+        'closed' => 'Fechado',
+    ];
+
+    $priorityClasses = [
+        'low' => 'bg-success',
+        'medium' => 'bg-warning text-dark',
+        'high' => 'bg-danger',
+    ];
+
+    $statusClasses = [
+        'open' => 'bg-primary',
+        'in_progress' => 'bg-warning text-dark',
+        'resolved' => 'bg-success',
+        'closed' => 'bg-secondary', 
+    ];
+
+?>
 
 <div class="container mt-5">
     <h2>Acompanhar Chamado</h2>
+
+    <?php if (!empty($sucessMessage)): ?>
+        <div class="alert alert-success mt-3" role="alert">
+            <?= htmlspecialchars($sucessMessage, ENT_QUOTES, 'UTF-8'); ?>
+        </div>
+    <?php endif; ?>
 
     <form action="index.php" method="GET">
         <input type="hidden" name="page" value="track_tickets">
@@ -17,8 +60,7 @@
                 id="ticket_id" 
                 name="ticket_id"
                 min="1"
-                value="<?= htmlspecialchars((string) $ticketId, ENT_QUOTES, 'UTF-8') ?>" 
-                required
+                value="<?= htmlspecialchars((string) $ticketId, ENT_QUOTES, 'UTF-8') ?>"
             >
         </div>
 
@@ -26,6 +68,8 @@
             <i class="bi bi-search me-2"></i>
             Pesquisar
         </button>
+    
+        <a href="?page=track_tickets" class="btn btn-secondary"><i class="bi bi-eraser-fill me-2"></i>Limpar Pesquisa</a>
     </form>
 
     <?php if ($error): ?>
@@ -48,25 +92,100 @@
 
                     <p>
                         <strong>Categoria:</strong>
-                        <?= htmlspecialchars($ticket['category'], ENT_QUOTES, 'UTF-8'); ?>
+                        <?= htmlspecialchars($categoryLabels[$ticket['category']], ENT_QUOTES, 'UTF-8'); ?>
                     </p>
 
                     <p>
                         <strong>Prioridade:</strong>
-                        <?= htmlspecialchars($ticket['priority'], ENT_QUOTES, 'UTF-8'); ?>
+                            <span class="badge <?= $priorityClasses[$ticket['priority']] ?? 'bg-secondary' ?>">
+                                <?= htmlspecialchars($priorityLabels[$ticket['priority']], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
                     </p>
 
                     <p>
                         <strong>Status:</strong>
-                        <?= htmlspecialchars($ticket['status'], ENT_QUOTES, 'UTF-8'); ?>
+                            <span class="badge <?= $statusClasses[$ticket['status']] ?? 'bg-secondary' ?>">
+                                <?= htmlspecialchars($statusLabels[$ticket['status']], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
                     </p>
 
-                    <p class="mb-1"><strong>Descrição:</strong>
+                    <p class="mb-1"><strong>Descrição:</strong></p>
 
                     <p>
                         <?= nl2br(htmlspecialchars($ticket['description'], ENT_QUOTES, 'UTF-8')); ?>
                     </p>
                 </div>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="container mt-5">
+        <hr>
+        <h3>Últimos Chamados</h3>
+
+        <?php if (empty($recentTickets)): ?>
+            <div class="alert alert-info">
+                Você ainda não criou nenhum chamado.
+            </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover align middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Assunto</th>
+                            <th>Categoria</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach ($recentTickets as $recentTicket): ?>
+                            <tr>
+                                <td>
+                                    #<?= $recentTicket['id'] ?>
+                                </td>
+
+                                <td>
+                                    <?= htmlspecialchars($recentTicket['subject'], ENT_QUOTES, 'UTF-8') ?>
+                                </td>
+
+                                <td>
+                                    <?= htmlspecialchars(
+                                        $categoryLabels[$recentTicket['category']] ?? $recentTicket['category'], ENT_QUOTES, 'UTF-8'
+                                    ) ?>
+                                </td>
+
+                                <td>
+                                    <span class="badge <?= $priorityClasses[$recentTicket['priority']] ?? 'bg-secondary' ?>">
+                                        <?= htmlspecialchars(
+                                            $priorityLabels[$recentTicket['priority']] ?? $recentTicket['priority'], ENT_QUOTES, 'UTF-8'
+                                        ) ?>
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge <?= $statusClasses[$recentTicket['status']] ?? 'bg-secondary' ?>">
+                                        <?= htmlspecialchars(
+                                            $statusLabels[$recentTicket['status']], ENT_QUOTES, 'UTF-8'
+                                        ) ?>
+                                    </span>
+                                </td>
+
+                                <td class="text-end">
+                                    <a
+                                        class="btn btn-sm btn-outline-primary"
+                                        href="?page=track_tickets&ticket_id=<?= (int) $recentTicket['id'] ?>"
+                                    >
+                                        Ver Chamado
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         <?php endif; ?>
     </div>

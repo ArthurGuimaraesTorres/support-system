@@ -30,7 +30,7 @@
             $priority = $_POST['priority'] ?? '';
             $description = $_POST['description'] ?? '';
 
-            $allowedCategories = ['Bug', 'Hardware', 'Rede', 'Outros'];
+            $allowedCategories = ['bug', 'hardware', 'network', 'other'];
             $allowedPriorities = ['low', 'medium', 'high'];
 
             $errors = [];
@@ -66,7 +66,7 @@
 
             $_SESSION['success_message'] = "Ticket criado com sucesso! ID: $ticketId";
 
-            header('Location: ?page=track_tickets');
+            header("Location: ?page=track_tickets&ticket_id=$ticketId");
             exit;
         }
 
@@ -80,6 +80,9 @@
 
         public function showTrack(): void
         {
+            $sucessMessage = $_SESSION['success_message'] ?? null;
+            unset($_SESSION['success_message']);
+
             $this->requireAuthentication();
 
             $ticket = null;
@@ -99,6 +102,8 @@
                     }
                 }
             }
+
+            $recentTickets = $this->ticketModel->findRecentByUser((int)$_SESSION['user_id'], 5);
 
             require __DIR__ . '/../views/tickets/track.php';
         }

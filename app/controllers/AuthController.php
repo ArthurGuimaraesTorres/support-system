@@ -36,6 +36,19 @@
             }
         }
 
+        public function requireRole(array $roles): void
+        {
+            if (!isset($_SESSION['user_id'])) {
+                header('Location: ?page=login');
+                exit;
+            }
+
+            if (!in_array($_SESSION['role'] ?? '', $roles, true)) {
+                header('Location: ?page=home');
+                exit;
+            }
+        }
+
         public function login(): void
         {
             $email = $_POST['email'] ?? '';
@@ -45,6 +58,7 @@
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['name'] = $user['name'];
+                $_SESSION['role'] = $user['role'];
 
                 header('Location: ?page=home');
                 exit;

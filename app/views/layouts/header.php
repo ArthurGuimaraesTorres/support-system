@@ -24,6 +24,13 @@
                         <li class="nav-item">
                             <a class="btn btn-light text-primary fw-semibold" href="?page=track_tickets"><i class="bi bi-search me-2"></i>Acompanhar meu Chamado</a>
                         </li>
+                        <?php if (($_SESSION['role'] ?? '') === 'technician'): ?>
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" href="?page=technician_tickets">
+                                    <i class="bi bi-tools me-2"></i>Atender Chamados
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
