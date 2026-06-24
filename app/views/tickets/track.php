@@ -1,41 +1,4 @@
-<?php 
-
-    require __DIR__ ."/../layouts/header.php"; 
-
-    $categoryLabels = [
-        'bug' => 'Bug',
-        'hardware'=> 'Hardware',
-        'network' => 'Rede',
-        'other' => 'Outros',
-    ];
-
-    $priorityLabels = [
-        'low' => 'Baixa',
-        'medium' => 'Média',
-        'high' => 'Alta',
-    ];
-
-    $statusLabels = [
-        'open' => 'Aberto',
-        'in-progress' => 'Em andamento',
-        'resolved' => 'Resolvido',
-        'closed' => 'Fechado',
-    ];
-
-    $priorityClasses = [
-        'low' => 'bg-success',
-        'medium' => 'bg-warning text-dark',
-        'high' => 'bg-danger',
-    ];
-
-    $statusClasses = [
-        'open' => 'bg-primary',
-        'in_progress' => 'bg-warning text-dark',
-        'resolved' => 'bg-success',
-        'closed' => 'bg-secondary', 
-    ];
-
-?>
+<?php require __DIR__ ."/../layouts/header.php"; ?>
 
 <div class="container mt-5">
     <h2>Acompanhar Chamado</h2>
@@ -137,6 +100,7 @@
                             <th>Categoria</th>
                             <th>Prioridade</th>
                             <th>Status</th>
+                            <th>Aberto em</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -172,6 +136,10 @@
                                             $statusLabels[$recentTicket['status']], ENT_QUOTES, 'UTF-8'
                                         ) ?>
                                     </span>
+                                </td>
+
+                                <td>
+                                    <?= (new DateTime ($recentTicket['created_at']))->format('d/m/Y'); ?>
                                 </td>
 
                                 <td class="text-end">

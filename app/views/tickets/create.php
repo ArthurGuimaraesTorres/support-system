@@ -58,5 +58,6 @@
 
         <button type="submit" class="btn btn-primary">Criar Ticket</button>
     </form>
+</div>
 
-    <?php require __DIR__ . '/../layouts/footer.php'; ?>
+<?php require __DIR__ . '/../layouts/footer.php'; ?>

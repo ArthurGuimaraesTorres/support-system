@@ -1,3 +1,46 @@
+<?php
+
+    $roleLabels = [
+        "customer"=> "Usuário",
+        "technician"=> "Técnico",
+        "admin"=> "Administrador",
+    ];
+
+    $categoryLabels = [
+        'bug' => 'Bug',
+        'hardware'=> 'Hardware',
+        'network' => 'Rede',
+        'other' => 'Outros',
+    ];
+
+    $priorityLabels = [
+        'low' => 'Baixa',
+        'medium' => 'Média',
+        'high' => 'Alta',
+    ];
+
+    $statusLabels = [
+        'open' => 'Aberto',
+        'in-progress' => 'Em andamento',
+        'resolved' => 'Resolvido',
+        'closed' => 'Fechado',
+    ];
+
+    $priorityClasses = [
+        'low' => 'bg-success',
+        'medium' => 'bg-warning text-dark',
+        'high' => 'bg-danger',
+    ];
+
+    $statusClasses = [
+        'open' => 'bg-primary',
+        'in_progress' => 'bg-warning text-dark',
+        'resolved' => 'bg-success',
+        'closed' => 'bg-secondary', 
+    ];
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,7 +51,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <?php if (empty($hideNavbar)): ?>
         <nav class="navbar navbar-expand-lg navbar-light navbar-color">
             <div class="container">
@@ -37,6 +80,8 @@
                         <div class="nav-item d-flex align-items-center me-3">
                             <div class="nav-link">
                                 <?= htmlspecialchars($_SESSION["name"] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                                |
+                                <?= htmlspecialchars($roleLabels[$_SESSION['role']] ?? 'Sem perfil', ENT_QUOTES, 'UTF-8'); ?>
                             </div>
                         </div>
                         <li class="nav-item dropdown">

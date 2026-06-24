@@ -107,4 +107,11 @@
 
             require __DIR__ . '/../views/tickets/track.php';
         }
+
+        public function showTechnicianDashboard(): void
+        {
+            $tickets = $this->ticketModel->findAllForTechnician();
+
+            require __DIR__ .'/../views/tickets/technician_dashboard.php';
+        }
     }

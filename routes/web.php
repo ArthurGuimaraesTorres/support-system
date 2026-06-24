@@ -79,6 +79,11 @@
             $ticketController->showTrack();
             break;
 
+        case 'technician_tickets':
+            $authController->requireRole(['technician', 'admin']);
+            $ticketController->showTechnicianDashboard();
+            break;
+
         default:
             echo "Página não encontrada.";
     }
