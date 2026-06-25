@@ -84,6 +84,21 @@
             $ticketController->showTechnicianDashboard();
             break;
 
+        case 'technician_ticket_show':
+            $authController->requireRole(['technician','admin']);
+            $ticketController->showTechnicianTicket();
+            break;
+
+        case 'technician_ticket_status_update':
+            $authController->requireRole(['technician','admin']);
+            $ticketController->updateTechnicianTicketStatus();
+            break;
+
+        case 'technician_ticket_reply_store':
+            $authController->requireRole(['technician', 'admin']);
+            $ticketController->storeTechnicianReply();
+            break;
+
         default:
             echo "Página não encontrada.";
     }

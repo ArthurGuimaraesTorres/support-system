@@ -21,7 +21,7 @@
 
     $statusLabels = [
         'open' => 'Aberto',
-        'in-progress' => 'Em andamento',
+        'in_progress' => 'Em andamento',
         'resolved' => 'Resolvido',
         'closed' => 'Fechado',
     ];

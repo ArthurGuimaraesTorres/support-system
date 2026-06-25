@@ -114,4 +114,89 @@
 
             require __DIR__ .'/../views/tickets/technician_dashboard.php';
         }
+
+        public function showTechnicianTicket(): void
+        {
+            $ticketId = $_GET['ticket_id'] ??'';
+            $ticket = null;
+            $replies = [];
+            $error = null;
+
+            if (filter_var($ticketId, FILTER_VALIDATE_INT) === false || (int)$ticketId <= 0) {
+                $error = 'Informe um ID de chamado válido.';
+            } else {
+                $ticket = $this->ticketModel->findByIdForTechnician((int)$ticketId);
+
+                if (!$ticket) {
+                    $error = 'Chamado não encontrado.';
+                } else {
+                    $replies = $this->ticketModel->findRepliesByTicket((int) $ticketId);
+                }
+            }
+
+            require __DIR__ .'/../views/tickets/technician_show.php';
+        }
+
+        public function updateTechnicianTicketStatus(): void
+        {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
+            $ticketId = $_POST['ticket_id'] ??'';
+            $status = $_POST['status'] ??'';
+
+            $allowedStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+
+            if (
+                filter_var($ticketId, FILTER_VALIDATE_INT) === false || 
+                (int) $ticketId <= 0 || 
+                !in_array($status, $allowedStatuses, true)
+            ) {
+                    header('Location: ?page=technician_tickets');
+                    exit;
+            }
+
+            $this->ticketModel->updateStatusForTechnician((int) $ticketId, $status);
+
+            header('Location: ?page=technician_ticket_show&ticket_id=' . (int) $ticketId);
+            exit;
+        }
+
+        public function storeTechnicianReply(): void
+        {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
+            $ticketId = $_POST['ticket_id'] ?? '';
+            $message = trim($_POST['message'] ?? '');
+
+            if (
+                filter_var($ticketId, FILTER_VALIDATE_INT) === false ||
+                (int) $ticketId <= 0 ||
+                mb_strlen($message) < 2
+            ) {
+                header('Location: ?page=technician_ticket_show&ticket_id=' . (int) $ticketId);
+                exit;
+            }
+
+            $ticket = $this->ticketModel->findByIdForTechnician((int) $ticketId);
+
+            if (!$ticket) {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
+            $this->ticketModel->addReply(
+                (int) $ticketId,
+                (int) $_SESSION['user_id'],
+                $message
+            );
+
+            header('Location: ?page=technician_ticket_show&ticket_id='. (int) $ticketId);
+            exit;
+        }
     }

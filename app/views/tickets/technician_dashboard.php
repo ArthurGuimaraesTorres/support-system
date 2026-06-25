@@ -14,6 +14,7 @@
                     <th>Prioridade</th>
                     <th>Status</th>
                     <th>Criado em</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,14 @@
                             </span>
                         </td>
                         <td><?= (new DateTime ($ticket['created_at']))->format('d/m/Y H:i'); ?></td>
+                        <td class="text-end">
+                            <a
+                                class="btn btn-sm btn-outline-primary"
+                                href="?page=technician_ticket_show&ticket_id=<?= (int) $ticket['id'] ?>"
+                            >
+                                Atender
+                            </a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
