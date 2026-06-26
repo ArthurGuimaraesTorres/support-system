@@ -35,6 +35,7 @@
                 ':id' => $ticketId,
                 ':user_id' => $userId
             ]);
+
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         }
 
@@ -91,7 +92,7 @@
             return $stmt->execute([':status' => $status,':id'=> $ticketId]);        
         }
 
-        public function addReply(int $ticketId, int $userId, string $messsage): bool
+        public function addReply(int $ticketId, int $userId, string $message): bool
         {
             $sql = "INSERT INTO ticket_replies (ticket_id, user_id, message)
                     VALUES (:ticket_id, :user_id, :message)";
@@ -100,8 +101,8 @@
 
             return $stmt->execute([
                 ':ticket_id' => $ticketId,
-                'user_id'=> $userId,
-                ':message'=> $messsage
+                ':user_id'=> $userId,
+                ':message'=> $message
                 ]);
         }
 

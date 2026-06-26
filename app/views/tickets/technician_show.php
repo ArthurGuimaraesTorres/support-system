@@ -103,7 +103,8 @@
                         <div class="border rounded p-3 mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <strong>
-                                    <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?>
+                                    <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?> |
+                                    <?= htmlspecialchars($roleLabels[$reply['user_role']], ENT_QUOTES, 'UTF-8'); ?>
                                 </strong>
 
                                 <small class="text-muted">

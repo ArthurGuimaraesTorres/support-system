@@ -99,6 +99,15 @@
             $ticketController->storeTechnicianReply();
             break;
 
+        case 'customer_ticket_reply_store':
+            if (!isset($_SESSION['user_id'])) {
+                header('Location: ?page=login');
+                exit;
+            }
+
+            $ticketController->storeCustomerReply();
+            break;
+
         default:
             echo "Página não encontrada.";
     }

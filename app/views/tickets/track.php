@@ -77,9 +77,58 @@
                     <p>
                         <?= nl2br(htmlspecialchars($ticket['description'], ENT_QUOTES, 'UTF-8')); ?>
                     </p>
-                </div>
+
+                    <hr>
+
+                    <h3 class="h6 mb-3">Histórico de respostas</h3>
+
+                    <?php if (empty($replies)): ?>
+                        <div class="alert alert-info">
+                            Ainda não há respostas neste chamado.
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($replies as $reply): ?>
+                            <div class="border rounded p-3 mb-3">
+                                <strong>
+                                    <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?> |
+                                    <?= htmlspecialchars($roleLabels[$reply['user_role']], ENT_QUOTES, 'UTF-8'); ?>
+                                </strong>
+
+                                <small class="text-muted">
+                                    <?= (new DateTime($reply['created_at']))->format('d/m/Y H:i'); ?>
+                                </small>
+                            </div>
+
+                            <p class="mb-0">
+                                <?= nl2br(htmlspecialchars($reply['message'], ENT_QUOTES, 'UTF-8')); ?>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
+
+        <hr>
+
+        <form action="index.php?page=customer_ticket_reply_store" method="POST">
+            <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
+
+            <div class="mb-3">
+                <label for="message" class="form-label">Responder chamado</label>
+
+                <textarea
+                    name="message"
+                    id="message"
+                    class="form-control"
+                    rows="4"
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Enviar resposta
+            </button>
+        </form>
     </div>
 
     <div class="container mt-5">
@@ -157,5 +206,6 @@
             </div>
         <?php endif; ?>
     </div>
+</div>
 
 <?php require __DIR__ ."/../layouts/footer.php"; ?>

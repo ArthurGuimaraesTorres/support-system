@@ -87,6 +87,7 @@
 
             $ticket = null;
             $error = null;
+            $replies = [];
             $ticketId = $_GET['ticket_id'] ?? '';
 
             if ($ticketId !== '') {
@@ -198,5 +199,46 @@
 
             header('Location: ?page=technician_ticket_show&ticket_id='. (int) $ticketId);
             exit;
+        }
+
+        public function storeCustomerReply(): void
+        {
+            $this->requireAuthentication();
+
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header('Location: ?page=track_tickets');
+                exit;
+            }
+
+            $ticketId = $_POST['ticket_id'] ?? '';
+            $message = trim($_POST['message'] ?? '');
+            
+            if (
+                filter_var($ticketId, FILTER_VALIDATE_INT) === false ||
+                (int) $ticketId <= 0||
+                mb_strlen($message) < 2
+            ) {
+                header('Location: ?page=track_tickets&ticket_id=' . (int) $ticketId);
+                exit;
+            }
+
+            $ticket = $this->ticketModel->findByIdAndUser(
+                (int) $ticketId,
+                (int) $_SESSION['user_id']
+            );
+
+            if (!$ticket) {
+                header('Location: ?page=track_tickets');
+                exit;
+        }
+
+        $this->ticketModel->addReply(
+            (int) $ticketId,
+            (int) $_SESSION['user_id'],
+            $message
+        );
+
+        header('Location: ?page=track_tickets&ticket_id='. (int) $ticketId);
+        exit;
         }
     }
