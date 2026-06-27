@@ -100,7 +100,13 @@
                     </div>
                 <?php else: ?>
                     <?php foreach ($replies as $reply): ?>
-                        <div class="border rounded p-3 mb-3">
+                        <?php
+                            $isStaffReply = in_array($reply['user_role'], ['technician', 'admin'], true);
+                            $replyClass = $isStaffReply 
+                            ? 'ticket-reply ticket-reply-staff ms-auto'
+                            : 'ticket-reply ticket-reply-user me-auto';
+                        ?>
+                        <div class="<?= $replyClass ?>">
                             <div class="d-flex justify-content-between mb-2">
                                 <strong>
                                     <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?> |
@@ -124,21 +130,21 @@
                 <form action="index.php?page=technician_ticket_reply_store" method="POST">
                     <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
 
-                    <div class="mb-3">
                         <label for="message" class="form-label">Responder chamado</label>
 
-                        <textarea
-                            name="message"
-                            id="message"
-                            class="form-control"
-                            rows="4"
-                            required
-                        ></textarea>
-                    </div>
+                        <div class="d-flex gap-2 align-items-end">
+                            <textarea
+                                name="message"
+                                id="message"
+                                class="form-control"
+                                rows="4"
+                                required
+                            ></textarea>
 
-                    <button type="submit" class="btn btn-primary">
-                        Enviar resposta
-                    </button>
+                            <button type="submit" class="btn btn-primary" aria-label="Enviar resposta">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
                 </form>
             </div>
         </div>

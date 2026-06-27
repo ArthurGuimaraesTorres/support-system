@@ -100,6 +100,8 @@
 
                     if (!$ticket) {
                         $error = "Ticket não encontrado ou você não tem permissão para visualizá-lo.";
+                    } else {
+                        $replies = $this->ticketModel->findRepliesByTicket((int) $ticketId);
                     }
                 }
             }
@@ -230,15 +232,15 @@
             if (!$ticket) {
                 header('Location: ?page=track_tickets');
                 exit;
-        }
+            }
 
-        $this->ticketModel->addReply(
-            (int) $ticketId,
-            (int) $_SESSION['user_id'],
-            $message
-        );
+            $this->ticketModel->addReply(
+                (int) $ticketId,
+                (int) $_SESSION['user_id'],
+                $message
+            );
 
-        header('Location: ?page=track_tickets&ticket_id='. (int) $ticketId);
-        exit;
+            header('Location: ?page=track_tickets&ticket_id='. (int) $ticketId);
+            exit;
         }
     }

@@ -88,124 +88,132 @@
                         </div>
                     <?php else: ?>
                         <?php foreach ($replies as $reply): ?>
-                            <div class="border rounded p-3 mb-3">
-                                <strong>
-                                    <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?> |
-                                    <?= htmlspecialchars($roleLabels[$reply['user_role']], ENT_QUOTES, 'UTF-8'); ?>
-                                </strong>
+                            <?php
+                                $isStaffReply = in_array($reply['user_role'], ['technician', 'admin'], true);
+                                $replyClass = $isStaffReply 
+                                ? 'ticket-reply ticket-reply-staff me-auto'
+                                : 'ticket-reply ticket-reply-user ms-auto';
+                            ?>
 
-                                <small class="text-muted">
-                                    <?= (new DateTime($reply['created_at']))->format('d/m/Y H:i'); ?>
-                                </small>
+                            <div class="<?= $replyClass ?>">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong>
+                                        <?= htmlspecialchars($reply['user_name'], ENT_QUOTES, 'UTF-8'); ?> |
+                                        <?= htmlspecialchars($roleLabels[$reply['user_role']], ENT_QUOTES, 'UTF-8'); ?>
+                                    </strong>
+
+                                    <small class="text-muted">
+                                        <?= (new DateTime($reply['created_at']))->format('d/m/Y H:i'); ?>
+                                    </small>
+                                </div>
+
+                                <p class="mb-0">
+                                    <?= nl2br(htmlspecialchars($reply['message'], ENT_QUOTES, 'UTF-8')); ?>
+                                </p>
                             </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="card-footer bg-white">
+                    <form action="index.php?page=customer_ticket_reply_store" method="POST">
+                        <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
 
-                            <p class="mb-0">
-                                <?= nl2br(htmlspecialchars($reply['message'], ENT_QUOTES, 'UTF-8')); ?>
-                            </p>
+                        <label for="message" class="form-label">Responder chamado</label>
+
+                        <div class="d-flex gap-2 align-items-end">
+                            <textarea
+                                name="message"
+                                id="message"
+                                class="form-control"
+                                rows="4"
+                                required
+                            ></textarea>
+
+                            <button type="submit" class="btn btn-primary" aria-label="Enviar resposta">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
                         </div>
-                    <?php endforeach; ?>
+                    </form>
+                </div>
+
+        <?php endif; ?>
+
+            <div class="container mt-5">
+                <hr>
+                <h3>Últimos Chamados</h3>
+
+                <?php if (empty($recentTickets)): ?>
+                    <div class="alert alert-info">
+                        Você ainda não criou nenhum chamado.
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-hover align middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Assunto</th>
+                                    <th>Categoria</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>Aberto em</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach ($recentTickets as $recentTicket): ?>
+                                    <tr>
+                                        <td>
+                                            #<?= $recentTicket['id'] ?>
+                                        </td>
+
+                                        <td>
+                                            <?= htmlspecialchars($recentTicket['subject'], ENT_QUOTES, 'UTF-8') ?>
+                                        </td>
+
+                                        <td>
+                                            <?= htmlspecialchars(
+                                                $categoryLabels[$recentTicket['category']] ?? $recentTicket['category'], ENT_QUOTES, 'UTF-8'
+                                            ) ?>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge <?= $priorityClasses[$recentTicket['priority']] ?? 'bg-secondary' ?>">
+                                                <?= htmlspecialchars(
+                                                    $priorityLabels[$recentTicket['priority']] ?? $recentTicket['priority'], ENT_QUOTES, 'UTF-8'
+                                                ) ?>
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge <?= $statusClasses[$recentTicket['status']] ?? 'bg-secondary' ?>">
+                                                <?= htmlspecialchars(
+                                                    $statusLabels[$recentTicket['status']], ENT_QUOTES, 'UTF-8'
+                                                ) ?>
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <?= (new DateTime ($recentTicket['created_at']))->format('d/m/Y'); ?>
+                                        </td>
+
+                                        <td class="text-end">
+                                            <a
+                                                class="btn btn-sm btn-outline-primary"
+                                                href="?page=track_tickets&ticket_id=<?= (int) $recentTicket['id'] ?>"
+                                            >
+                                                Ver Chamado
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
-        <?php endif; ?>
-
-        <hr>
-
-        <form action="index.php?page=customer_ticket_reply_store" method="POST">
-            <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
-
-            <div class="mb-3">
-                <label for="message" class="form-label">Responder chamado</label>
-
-                <textarea
-                    name="message"
-                    id="message"
-                    class="form-control"
-                    rows="4"
-                    required
-                ></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Enviar resposta
-            </button>
-        </form>
-    </div>
-
-    <div class="container mt-5">
-        <hr>
-        <h3>Últimos Chamados</h3>
-
-        <?php if (empty($recentTickets)): ?>
-            <div class="alert alert-info">
-                Você ainda não criou nenhum chamado.
-            </div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-hover align middle">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Assunto</th>
-                            <th>Categoria</th>
-                            <th>Prioridade</th>
-                            <th>Status</th>
-                            <th>Aberto em</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <?php foreach ($recentTickets as $recentTicket): ?>
-                            <tr>
-                                <td>
-                                    #<?= $recentTicket['id'] ?>
-                                </td>
-
-                                <td>
-                                    <?= htmlspecialchars($recentTicket['subject'], ENT_QUOTES, 'UTF-8') ?>
-                                </td>
-
-                                <td>
-                                    <?= htmlspecialchars(
-                                        $categoryLabels[$recentTicket['category']] ?? $recentTicket['category'], ENT_QUOTES, 'UTF-8'
-                                    ) ?>
-                                </td>
-
-                                <td>
-                                    <span class="badge <?= $priorityClasses[$recentTicket['priority']] ?? 'bg-secondary' ?>">
-                                        <?= htmlspecialchars(
-                                            $priorityLabels[$recentTicket['priority']] ?? $recentTicket['priority'], ENT_QUOTES, 'UTF-8'
-                                        ) ?>
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="badge <?= $statusClasses[$recentTicket['status']] ?? 'bg-secondary' ?>">
-                                        <?= htmlspecialchars(
-                                            $statusLabels[$recentTicket['status']], ENT_QUOTES, 'UTF-8'
-                                        ) ?>
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <?= (new DateTime ($recentTicket['created_at']))->format('d/m/Y'); ?>
-                                </td>
-
-                                <td class="text-end">
-                                    <a
-                                        class="btn btn-sm btn-outline-primary"
-                                        href="?page=track_tickets&ticket_id=<?= (int) $recentTicket['id'] ?>"
-                                    >
-                                        Ver Chamado
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
-    </div>
 </div>
 
 <?php require __DIR__ ."/../layouts/footer.php"; ?>

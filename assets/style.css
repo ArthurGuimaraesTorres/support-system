@@ -6,3 +6,24 @@
 .navbar-color .nav-link {
     color: #fff;
 }
+
+.ticket-reply {
+    max-width: 78%;
+    padding: 1rem;
+    margin-bottom:1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #dee2e6;
+}
+
+.ticket-reply-user {
+    background-color: #fff;
+}
+
+.ticket-reply-staff {
+    background-color: #eaf2ff;
+    border-color: #b8d4ff;
+}
+
+.ticket-reply-form {
+    padding: 0.25rem 0;
+}
