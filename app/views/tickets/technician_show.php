@@ -151,4 +151,4 @@
     <?php endif; ?>
 </div>
 
-<?php require __DIR__ .'/../layouts/footer.php';
+<?php require __DIR__ . '/../layouts/footer.php'; ?>
