@@ -113,7 +113,17 @@
 
         public function showTechnicianDashboard(): void
         {
-            $tickets = $this->ticketModel->findAllForTechnician();
+            $filters = [
+                'status' => $_GET['status'] ?? '',
+                'priority' => $_GET['priority'] ?? '',
+                'category' => $_GET['category'] ?? '',
+                'search'=> trim($_GET['search'] ??''),
+                'assignment' => $_GET['assignment'] ?? '',
+                'current_user_id' => (int) $_SESSION['user_id'],
+            ];
+
+            $tickets = $this->ticketModel->findAllForTechnician($filters);
+            $ticketStats = $this->ticketModel->getTechnicianStats();
 
             require __DIR__ .'/../views/tickets/technician_dashboard.php';
         }
@@ -128,7 +138,10 @@
             if (filter_var($ticketId, FILTER_VALIDATE_INT) === false || (int)$ticketId <= 0) {
                 $error = 'Informe um ID de chamado válido.';
             } else {
-                $ticket = $this->ticketModel->findByIdForTechnician((int)$ticketId);
+                $ticket = $this->ticketModel->findByIdForTechnician(
+                    (int)$ticketId,
+                    (int) $_SESSION['user_id']
+                );
 
                 if (!$ticket) {
                     $error = 'Chamado não encontrado.';
@@ -161,6 +174,16 @@
                     exit;
             }
 
+            $ticket = $this->ticketModel->findAssignedToTechnician(
+                (int)$ticketId,
+                (int) $_SESSION['user_id']
+            );
+
+            if (!$ticket) {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
             $this->ticketModel->updateStatusForTechnician((int) $ticketId, $status);
 
             header('Location: ?page=technician_ticket_show&ticket_id=' . (int) $ticketId);
@@ -186,7 +209,10 @@
                 exit;
             }
 
-            $ticket = $this->ticketModel->findByIdForTechnician((int) $ticketId);
+            $ticket = $this->ticketModel->findAssignedToTechnician(
+                (int) $ticketId,
+                (int) $_SESSION['user_id']
+            );
 
             if (!$ticket) {
                 header('Location: ?page=technician_tickets');
@@ -241,6 +267,32 @@
             );
 
             header('Location: ?page=track_tickets&ticket_id='. (int) $ticketId);
+            exit;
+        }
+
+        public function assignTechnicianTicket(): void
+        {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
+            $ticketId = $_POST['ticket_id'] ??'';
+
+            if (
+                filter_var($ticketId, FILTER_VALIDATE_INT) === false ||
+                (int) $ticketId <= 0
+            ) {
+                header('Location: ?page=technician_tickets');
+                exit;
+            }
+
+            $this->ticketModel->assignToTechnician(
+                (int) $ticketId,
+                (int) $_SESSION['user_id']
+            );
+
+            header('Location: ?page=technician_ticket_show&ticket_id=' . (int) $ticketId);
             exit;
         }
     }

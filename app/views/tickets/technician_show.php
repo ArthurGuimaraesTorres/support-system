@@ -1,12 +1,30 @@
-<?php require __DIR__ ."/../layouts/header.php"; ?>
+<?php
+
+    require __DIR__ ."/../layouts/header.php"; 
+
+    $canHandleTicket = (int) ($ticket['assigned_to'] ?? 0) === (int) $_SESSION['user_id'];
+    $isUnassigned = empty($ticket['assigned_to']);
+?>
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Atendimento do chamado</h1>
 
-        <a href="?page=technician_tickets" class="btn btn-outline-secondary btn-sm">
-            Voltar
-        </a>
+        <div class="d-flex gap-2">
+            <?php if ($isUnassigned): ?>
+                <form action="index.php?page=technician_ticket_assign" method="POST">
+                    <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
+
+                    <button type="submit" class="btn btn-sm btn-success">
+                        Assumir chamado
+                    </button>
+                </form>
+            <?php endif; ?>
+
+            <a href="?page=technician_tickets" class="btn btn-outline-secondary btn-sm">
+                Voltar
+            </a>
+        </div>
     </div>
 
     <?php if (!empty($error)): ?>
@@ -20,30 +38,32 @@
                     Chamado #<?= (int) $ticket['id'] ?>
                 </strong>
 
-                <form
-                    action="index.php?page=technician_ticket_status_update"
-                    method="POST"
-                    class="d-flex align-items-center gap-2 mb-0"
-                >
-                    <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id']; ?>">
+                <?php if ($canHandleTicket): ?>
+                    <form
+                        action="index.php?page=technician_ticket_status_update"
+                        method="POST"
+                        class="d-flex align-items-center gap-2 mb-0"
+                    >
+                        <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id']; ?>">
 
-                    <label for="status" class="visually-hidden">Status</label>
+                        <label for="status" class="visually-hidden">Status</label>
 
-                    <select name="status" 
+                        <select name="status" 
                             id="status" 
                             class="form-select form-select-sm w-auto"
                             onchange="this.form.submit()"        
-                    >
-                        <?php foreach ($statusLabels as $statusValue => $statusLabel): ?>
-                            <option
-                                value="<?= htmlspecialchars($statusValue, ENT_QUOTES, 'UTF-8'); ?>"
-                                <?= $ticket['status'] === $statusValue ? 'selected' : ''; ?>
-                            >
-                                <?= htmlspecialchars($statusLabel, ENT_QUOTES, 'UTF-8') ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
+                        >
+                            <?php foreach ($statusLabels as $statusValue => $statusLabel): ?>
+                                <option
+                                    value="<?= htmlspecialchars($statusValue, ENT_QUOTES, 'UTF-8'); ?>"
+                                    <?= $ticket['status'] === $statusValue ? 'selected' : ''; ?>
+                                >
+                                    <?= htmlspecialchars($statusLabel, ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                <?php endif; ?>
             </div>
 
             <div class="card-body">
@@ -127,8 +147,9 @@
 
                 <hr>
 
-                <form action="index.php?page=technician_ticket_reply_store" method="POST">
-                    <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
+                <?php if ($canHandleTicket): ?>
+                    <form action="index.php?page=technician_ticket_reply_store" method="POST">
+                        <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
 
                         <label for="message" class="form-label">Responder chamado</label>
 
@@ -145,7 +166,12 @@
                                 <i class="bi bi-send-fill"></i>
                             </button>
                         </div>
-                </form>
+                    </form>
+                <?php elseif ($isUnassigned): ?>
+                    <div class="alert alert-warning mb-0">
+                        Assuma este chamado para responder.
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>

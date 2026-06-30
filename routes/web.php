@@ -108,6 +108,11 @@
             $ticketController->storeCustomerReply();
             break;
 
+        case 'technician_ticket_assign':
+            $authController->requireRole(['technician','admin']);
+            $ticketController->assignTechnicianTicket();
+            break;
+
         default:
             echo "Página não encontrada.";
     }

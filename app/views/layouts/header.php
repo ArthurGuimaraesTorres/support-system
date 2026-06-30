@@ -61,16 +61,42 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav gap-2">
-                        <li class="nav-item">
-                            <a class="btn btn-light text-primary fw-semibold" href="?page=create_ticket"><i class="bi bi-plus-circle me-2"></i>Criar Chamado</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-light text-primary fw-semibold" href="?page=track_tickets"><i class="bi bi-search me-2"></i>Acompanhar meu Chamado</a>
-                        </li>
+                        <?php if ($_SESSION['role'] === 'customer'): ?>
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=create_ticket">
+                                   <i class="bi bi-plus-circle me-2"></i>
+                                   Criar Chamado
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if ($_SESSION['role'] === 'customer'): ?>
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=track_tickets">
+                                   <i class="bi bi-search me-2"></i>
+                                   Acompanhar meu Chamado
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
                         <?php if (($_SESSION['role'] ?? '') === 'technician'): ?>
                             <li class="nav-item">
-                                <a class="btn btn-light text-primary fw-semibold" href="?page=technician_tickets">
-                                    <i class="bi bi-tools me-2"></i>Atender Chamados
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=technician_tickets&status=&priority=&category=&assignment=unassigned&search=">
+                                   <i class="bi bi-tools me-2"></i>
+                                   Atender Chamados
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if (($_SESSION['role'] ?? '') === 'technician'): ?>
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=technician_tickets&status=&priority=&category=&assignment=mine&search=">
+                                   <i class="bi bi-chat-square-dots-fill me-2"></i>
+                                   Meus Atendimentos
                                 </a>
                             </li>
                         <?php endif; ?>

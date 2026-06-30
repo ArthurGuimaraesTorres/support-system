@@ -27,3 +27,24 @@
 .ticket-reply-form {
     padding: 0.25rem 0;
 }
+
+.dashboard-stat-card {
+    border: 1px solid #dee2e6;
+    border-top-width: 6px;
+}
+
+.dashboard-stat-card.stat-open {
+    border-top-color: #2776EA;
+}
+
+.dashboard-stat-card.stat-progress {
+    border-top-color: #ffc107;
+}
+
+.dashboard-stat-card.stat-resolved {
+    border-top-color: #198754;
+}
+
+.dashboard-stat-card.stat-high {
+    border-top-color: #dc3545;
+}
