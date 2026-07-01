@@ -171,7 +171,6 @@
         public function getTechnicianStats(): array
         {
             $sql = "SELECT
-                        COUNT(*) AS total,
                         SUM(status = 'open') AS open,
                         SUM(status = 'in_progress') AS in_progress,
                         SUM(status = 'resolved') AS resolved,
@@ -219,5 +218,46 @@
             ]);
 
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
+
+        public function getAdminStats(): array
+        {
+            $sql = "SELECT
+                        COUNT(*) AS total,
+                        SUM(status = 'open') AS open,
+                        SUM(status = 'in_progress') AS in_progress,
+                        SUM(status = 'resolved') AS resolved,
+                        SUM(status = 'closed') AS closed,
+                        SUM(priority = 'high') AS high
+                    FROM tickets";
+
+            $stmt = $this->pdo->query($sql);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+                'total' => 0,
+                'open' => 0,
+                'in_progress' => 0,
+                'resolved' => 0,
+                'closed' => 0,
+                'high' => 0
+            ];
+        }
+
+        public function findRecentForAdmin(int $limit = 5): array
+        {
+            $limit = max(1, min($limit, 20));
+
+            $sql = "SELECT tickets.*,
+                           users.name AS user_name,
+                           assigned_users.name AS assigned_name
+                    FROM tickets
+                    INNER JOIN users ON users.id = tickets.user_id
+                    LEFT JOIN users AS assigned_users ON assigned_users.id = tickets.assigned_to
+                    ORDER BY tickets.created_at DESC
+                    LIMIT $limit";
+
+            $stmt = $this->pdo->query($sql);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         }
     }

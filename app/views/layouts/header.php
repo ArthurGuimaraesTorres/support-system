@@ -69,9 +69,7 @@
                                    Criar Chamado
                                 </a>
                             </li>
-                        <?php endif; ?>
 
-                        <?php if ($_SESSION['role'] === 'customer'): ?>
                             <li class="nav-item">
                                 <a class="btn btn-light text-primary fw-semibold" 
                                    href="?page=track_tickets">
@@ -89,14 +87,30 @@
                                    Atender Chamados
                                 </a>
                             </li>
-                        <?php endif; ?>
-
-                        <?php if (($_SESSION['role'] ?? '') === 'technician'): ?>
+                        
                             <li class="nav-item">
                                 <a class="btn btn-light text-primary fw-semibold" 
                                    href="?page=technician_tickets&status=&priority=&category=&assignment=mine&search=">
                                    <i class="bi bi-chat-square-dots-fill me-2"></i>
                                    Meus Atendimentos
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=admin_dashboard">
+                                   <i class="bi bi-speedometer2 me-2"></i>
+                                   Painel Administrativo
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-light text-primary fw-semibold" 
+                                   href="?page=admin_users">
+                                   <i class="bi bi-people-fill me-2"></i>
+                                   Gerenciar Usuários
                                 </a>
                             </li>
                         <?php endif; ?>

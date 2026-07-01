@@ -55,4 +55,61 @@
             $stmt->execute([':id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
         }
+
+        public function getAdminStats(): array
+        {
+            $sql = "SELECT
+                        COUNT(*) AS total,
+                        SUM(role = 'customer') AS customers,
+                        SUM(role = 'technician') AS technicians,
+                        SUM(role = 'admin') AS admins
+                    FROM users";
+
+            $stmt = $this->pdo->query($sql);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+                'total' => 0,
+                'customers' => 0,
+                'technicians' => 0,
+                'admins' => 0
+            ];
+        }
+
+        public function findAllForAdmin(array $filters = []): array
+        {
+            $sql = "SELECT id, name, email, phone, role
+                    FROM users
+                    WHERE 1=1";
+
+            $params = [];
+
+            if (!empty($filters['search'])) {
+                $sql .= " AND (name LIKE :search OR email LIKE :search)";
+                $params[':search'] = '%' . $filters['search'] . '%';
+            }
+
+            if (!empty($filters['role'])) {
+                $sql .= " AND role = :role";
+                $params[':role'] = $filters['role'];
+            }
+
+            $sql .= " ORDER BY name ASC";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        }
+
+        public function updateRole(int $id, string $role): bool
+        {
+            $stmt = $this->pdo->prepare(
+                "UPDATE users SET role = :role WHERE id = :id"
+            );
+
+            return $stmt->execute([
+                ':role' => $role,
+                ':id' => $id
+            ]);
+        }
     }

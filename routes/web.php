@@ -1,10 +1,12 @@
 <?php
 
     require_once __DIR__ . '/../app/controllers/AuthController.php';
+    require_once __DIR__ . '/../app/controllers/AdminController.php';
     require_once __DIR__ . '/../app/controllers/TicketController.php';
     require_once __DIR__ . '/../app/controllers/ProfileController.php';
 
     $authController = new AuthController($pdo);
+    $adminController = new AdminController($pdo);
     $ticketController = new TicketController($pdo);
     $profileController = new ProfileController($pdo);
 
@@ -63,6 +65,10 @@
             break;
 
         case 'create_ticket':
+            if (!isset($_SESSION['user_id'])) {
+                header('Location: ?page=login');
+            }
+
             $ticketController->showCreate();
             break;
 
@@ -111,6 +117,21 @@
         case 'technician_ticket_assign':
             $authController->requireRole(['technician','admin']);
             $ticketController->assignTechnicianTicket();
+            break;
+
+        case 'admin_dashboard':
+            $authController->requireRole(['admin']);
+            $adminController->dashboard();
+            break;
+
+        case 'admin_users':
+            $authController->requireRole(['admin']);
+            $adminController->users();
+            break;
+
+        case 'admin_user_role_update':
+            $authController->requireRole(['admin']);
+            $adminController->updateUserRole();
             break;
 
         default:

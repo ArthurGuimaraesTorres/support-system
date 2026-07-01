@@ -4,14 +4,6 @@
     <h1 class="h3 mb-4">Chamados para atendimento</h1>
 
     <div class="row g-3 mb-4">
-        <div class="col-md">
-            <div class="card dashboard-stat-card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="text-muted">Total</div>
-                    <div class="h4 mb-0"><?= (int) $ticketStats['total'] ?></div>
-                </div>
-            </div>
-        </div>
 
         <div class="col-md">
             <div class="card dashboard-stat-card stat-open">
@@ -130,72 +122,79 @@
 
     <hr>
 
-    <div class="table-responsive">
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuário</th>
-                    <th>Assunto</th>
-                    <th>Categoria</th>
-                    <th>Prioridade</th>
-                    <th>Status</th>
-                    <th>Criado em</th>
-                    <th>Atribuído a</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($tickets as $ticket): ?>
+    <?php if (empty($tickets)): ?>
+        <div class="alert alert-info">
+            Não há nenhum chamado disponível.
+        </div>
+    <?php else: ?>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
                     <tr>
-                        <td><?= htmlspecialchars($ticket['id']) ?></td>
-                        <td><?= htmlspecialchars($ticket['user_name']) ?></td>
-                        <td><?= htmlspecialchars($ticket['subject']) ?></td>
-                        <td><?= htmlspecialchars($categoryLabels[$ticket['category']]) ?></td>
-                        <td>
-                            <span class="badge <?= $priorityClasses[$ticket['priority']] ?? 'bg-secondary' ?>">
-                                <?= htmlspecialchars($priorityLabels[$ticket['priority']], ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge <?= $statusClasses[$ticket['status']] ?? 'bg-secondary' ?>">
-                                <?= htmlspecialchars($statusLabels[$ticket['status']], ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
-                        </td>
-                        <td><?= (new DateTime ($ticket['created_at']))->format('d/m/Y H:i'); ?></td>
-                        <td>
-                            <?php if (!empty($ticket['assigned_name'])): ?>
-                                <span class="badge bg-success">
-                                    <?= htmlspecialchars($ticket['assigned_name'], ENT_QUOTES, 'UTF-8') ?>
-                                </span>
-                            <?php else: ?>
-                                <span class="badge bg-secondary">
-                                    Não atribuído
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="text-end">
-                            <?php if (empty($ticket['assigned_to'])): ?>
-                                <a
-                                    class="btn btn-sm btn-outline-secondary"
-                                    href="?page=technician_ticket_show&ticket_id=<?= (int) $ticket['id'] ?>"
-                                >
-                                    Visualizar
-                                </a>
-                            <?php elseif ((int) $ticket['assigned_to'] === (int) $_SESSION['user_id']): ?>
-                                <a
-                                    class="btn btn-sm btn-outline-primary"
-                                    href="?page=technician_ticket_show&ticket_id=<?= (int) $ticket['id'] ?>"
-                                >
-                                    Atender
-                                </a>
-                            <?php endif; ?>
-                        </td>
+                        <th>ID</th>
+                        <th>Usuário</th>
+                        <th>Assunto</th>
+                        <th>Categoria</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Criado em</th>
+                        <th>Atribuído a</th>
+                        <th></th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <?php foreach ($tickets as $ticket): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($ticket['id']) ?></td>
+                            <td><?= htmlspecialchars($ticket['user_name']) ?></td>
+                            <td><?= htmlspecialchars($ticket['subject']) ?></td>
+                            <td><?= htmlspecialchars($categoryLabels[$ticket['category']]) ?></td>
+                            <td>
+                                <span class="badge <?= $priorityClasses[$ticket['priority']] ?? 'bg-secondary' ?>">
+                                    <?= htmlspecialchars($priorityLabels[$ticket['priority']], ENT_QUOTES, 'UTF-8'); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge <?= $statusClasses[$ticket['status']] ?? 'bg-secondary' ?>">
+                                    <?= htmlspecialchars($statusLabels[$ticket['status']], ENT_QUOTES, 'UTF-8'); ?>
+                                </span>
+                            </td>
+                            <td><?= (new DateTime ($ticket['created_at']))->format('d/m/Y H:i'); ?></td>
+                            <td>
+                                <?php if (!empty($ticket['assigned_name'])): ?>
+                                    <span class="badge bg-success">
+                                        <?= htmlspecialchars($ticket['assigned_name'], ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">
+                                        Não atribuído
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-end">
+                                <?php if (empty($ticket['assigned_to'])): ?>
+                                    <a
+                                        class="btn btn-sm btn-outline-secondary"
+                                        href="?page=technician_ticket_show&ticket_id=<?= (int) $ticket['id'] ?>"
+                                    >
+                                        Visualizar
+                                    </a>
+                                <?php elseif ((int) $ticket['assigned_to'] === (int) $_SESSION['user_id']): ?>
+                                    <a
+                                        class="btn btn-sm btn-outline-primary"
+                                        href="?page=technician_ticket_show&ticket_id=<?= (int) $ticket['id'] ?>"
+                                    >
+                                        Atender
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 </div>
+
 
 <?php require __DIR__ ."/../layouts/footer.php"; ?>

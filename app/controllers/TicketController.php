@@ -125,7 +125,7 @@
             $tickets = $this->ticketModel->findAllForTechnician($filters);
             $ticketStats = $this->ticketModel->getTechnicianStats();
 
-            require __DIR__ .'/../views/tickets/technician_dashboard.php';
+            require __DIR__ .'/../views/technician/dashboard.php';
         }
 
         public function showTechnicianTicket(): void
@@ -150,7 +150,7 @@
                 }
             }
 
-            require __DIR__ .'/../views/tickets/technician_show.php';
+            require __DIR__ .'/../views/technician/ticket_show.php';
         }
 
         public function updateTechnicianTicketStatus(): void
