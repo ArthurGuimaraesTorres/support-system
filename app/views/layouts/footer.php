@@ -1,5 +1,5 @@
         <footer class="border-top mt-auto py-4 bg-light">
-            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-muted">
+            <div class="container-fluid px-5 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-muted">
                 <div>
                     <strong class="text-primary">GTs. | Support</strong>
                     &copy; <?= date('Y') ?> - Sistema de chamados

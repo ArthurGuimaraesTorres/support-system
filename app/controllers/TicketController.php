@@ -219,6 +219,11 @@
                 exit;
             }
 
+            if ($ticket['status'] === 'closed') {
+                header('Location: ?page=technician_ticket_show&ticket_id=' . (int) $ticketId);
+                exit;
+            }
+
             $this->ticketModel->addReply(
                 (int) $ticketId,
                 (int) $_SESSION['user_id'],
@@ -260,11 +265,20 @@
                 exit;
             }
 
+            if ($ticket['status'] === 'closed') {
+                header('Location: ?page=track_tickets&ticket_id=' . (int) $ticketId);
+                exit;
+            }
+
             $this->ticketModel->addReply(
                 (int) $ticketId,
                 (int) $_SESSION['user_id'],
                 $message
             );
+
+            if ($ticket['status'] === 'resolved') {
+                $this->ticketModel->updateStatusForTechnician((int) $ticketId, 'in_progress');
+            }
 
             header('Location: ?page=track_tickets&ticket_id='. (int) $ticketId);
             exit;

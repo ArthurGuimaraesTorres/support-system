@@ -34,8 +34,8 @@
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
-                    <div class="text-muted">Chamados</div>
-                    <div class="h4"><?= (int) $ticketStats['total'] ?></div>
+                    <div class="text-muted">Chamados em Aberto</div>
+                    <div class="h4"><?= (int) $ticketStats['open'] ?></div>
                 </div>
             </div>
         </div>
@@ -52,6 +52,8 @@
             Monitorar Chamados
         </a>
     </div>
+
+    <hr>
 
     <h2 class="h5 mb-3">Últimos Chamados</h2>
 
