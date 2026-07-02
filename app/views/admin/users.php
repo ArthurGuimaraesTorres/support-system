@@ -30,7 +30,7 @@
 
         <div class="col-md-4 d-flex align-items-end gap-2">
             <button type="submit" class="btn btn-primary"><i class="bi bi-filter-circle-fill me-2"></i>Filtrar</button>
-            <a href="?page=admin_users" class="btn btn-secondary"><i class="bi bi-eraser-fill me-2"></i>Limpar Filtros</a>
+            <a href="?page=admin_users" class="btn btn-secondary"><i class="bi bi-eraser-fill me-2"></i>Limpar</a>
         </div>
     </form>
 
@@ -78,3 +78,5 @@
         </table>
     </div>
 </div>
+
+<?php require __DIR__ . '/../layouts/footer.php'; ?>

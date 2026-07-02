@@ -260,4 +260,80 @@
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         }
+
+        public function findAllForAdmin(array $filters = []): array
+        {
+            $sql = "SELECT tickets.*, 
+                           users.name AS user_name,
+                           assigned_users.name AS assigned_name
+                    FROM tickets
+                    INNER JOIN users ON users.id = tickets.user_id
+                    LEFT JOIN users AS assigned_users ON assigned_users.id = tickets.assigned_to
+                    WHERE 1=1";
+
+            $params = [];
+
+            if (!empty($filters['status'])) {
+                $sql .= " AND tickets.status = :status";
+                $params[':status'] = $filters['status'];
+            }
+
+            if (!empty($filters['priority'])) {
+                $sql .= " AND tickets.priority = :priority";
+                $params[':priority'] = $filters['priority'];
+            }
+
+            if (!empty($filters['category'])) {
+                $sql .= " AND tickets.category = :category";
+                $params[':category'] = $filters['category'];
+            }
+
+            if (!empty($filters['search'])) {
+                $sql .= " AND (tickets.subject LIKE :search OR users.name LIKE :search)";
+                $params[':search'] = '%' . $filters['search'] . '%';
+            }
+
+            if (($filters['assignment'] ?? '') === 'assigned') {
+                $sql .= " AND tickets.assigned_to IS NOT NULL";
+            }
+
+            if (($filters['assignment'] ?? '') === 'unassigned') {
+                $sql .= " AND tickets.assigned_to IS NULL";
+            }
+
+            $sql .= " ORDER BY tickets.created_at DESC";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        }
+        
+        public function findByIdForAdmin(int $ticketId): ?array
+        {
+            $sql = "SELECT tickets.*, users.name AS user_name, users.email AS user_email
+                    FROM tickets
+                    INNER JOIN users ON users.id = tickets.user_id
+                    WHERE tickets.id = :id
+                    LIMIT 1";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':id' => $ticketId]);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
+
+        public function updateAssignmentForAdmin(int $ticketId, ?int $technicianId): bool
+        {
+            $sql = "UPDATE tickets
+                    SET assigned_to = :technician_id
+                    WHERE id = :ticket_id";
+
+            $stmt = $this->pdo->prepare($sql);
+
+            return $stmt->execute([
+                ':technician_id' => $technicianId,
+                ':ticket_id' => $ticketId
+            ]);
+        }
     }

@@ -47,7 +47,7 @@
             Gerenciar Usuários
         </a>
 
-        <a href="?page=admin_tickets" class="btn btn-secondary">
+        <a href="?page=admin_tickets" class="btn btn-primary">
             <i class="bi bi-ticket-perforated me-2"></i>
             Monitorar Chamados
         </a>
@@ -72,23 +72,24 @@
             </thead>
             <tbody>
                 <?php foreach ($recentTickets as $ticket): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($ticket['id'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($ticket['subject'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($ticket['user_name'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td>
-                            <span class="badge <?= $statusClasses[$ticket['status']] ?? 'bg-secondary' ?>">
-                                <?= htmlspecialchars(ucfirst($statusLabels[$ticket['status']] ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge <?= $priorityClasses[$ticket['priority']] ?? 'bg-secondary' ?>">
-                                <?= htmlspecialchars(ucfirst($priorityLabels[$ticket['priority']]), ENT_QUOTES, 'UTF-8') ?>
-                            </span>
-                        </td>
-                        <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($ticket['created_at'])), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($ticket['assigned_name'], ENT_QUOTES, 'UTF-8') ?></td>
-                    </tr>
+                <tr>
+                    <td><?= htmlspecialchars($ticket['id'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= htmlspecialchars($ticket['subject'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= htmlspecialchars($ticket['user_name'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td>
+                        <span class="badge <?= $statusClasses[$ticket['status']] ?? 'bg-secondary' ?>">
+                            <?= htmlspecialchars(ucfirst($statusLabels[$ticket['status']] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge <?= $priorityClasses[$ticket['priority']] ?? 'bg-secondary' ?>">
+                            <?= htmlspecialchars(ucfirst($priorityLabels[$ticket['priority']]), ENT_QUOTES, 'UTF-8') ?>
+                        </span>
+                    </td>
+                    <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($ticket['created_at'])), ENT_QUOTES, 'UTF-8') ?>
+                    </td>
+                    <td><?= htmlspecialchars($ticket['assigned_name'], ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>

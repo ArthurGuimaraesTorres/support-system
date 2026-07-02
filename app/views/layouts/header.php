@@ -112,6 +112,13 @@
                         </a>
                     </li>
 
+                    <Li class="nav-item">
+                        <a class="btn <?= $currentPage === 'admin_tickets' ? 'btn-light text-primary' : 'btn-outline-light' ?> fw-semibold"
+                            href="?page=admin_tickets">
+                            <i class="bi bi-ticket-perforated me-2"></i>
+                            Monitorar Chamados
+                        </a>
+
                     <li class="nav-item">
                         <a class="btn <?= $currentPage === 'admin_users' ? 'btn-light text-primary' : 'btn-outline-light' ?> fw-semibold"
                             href="?page=admin_users">

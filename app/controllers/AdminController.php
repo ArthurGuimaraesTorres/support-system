@@ -61,4 +61,96 @@ class AdminController
         header('Location: ?page=admin_users');
         exit;
     }
+
+    public function tickets(): void
+    {
+        $filters = [
+            'status' => $_GET['status'] ?? '',
+            'priority' => $_GET['priority'] ?? '',
+            'category' => $_GET['category'] ?? '',
+            'assignment' => $_GET['assignment'] ?? '',
+            'search' => trim($_GET['search'] ?? ''),
+        ];
+
+        $tickets = $this->ticketModel->findAllForAdmin($filters);
+        $ticketStats = $this->ticketModel->getAdminStats();
+
+        require __DIR__ . '/../views/admin/tickets.php';
+    }
+
+    public function showTicket(): void
+    {
+        $ticketId = $_GET['ticket_id'] ?? '';
+        $ticket = null;
+        $replies = [];
+        $error = null;
+
+        if (filter_var($ticketId, FILTER_VALIDATE_INT) === false || (int) $ticketId <= 0) {
+            $error = 'Informe um ID de chamado válido.';
+        } else {
+            $ticket = $this->ticketModel->findByIdForAdmin((int) $ticketId);
+
+            if (!$ticket) {
+                $error = 'Chamado não encontrado.';
+            } else {
+                $replies = $this->ticketModel->findRepliesByTicket((int) $ticketId);
+            }
+        }
+
+        $technicians = $this->userModel->findTechnicians();
+
+        require __DIR__ . '/../views/admin/ticket_show.php';
+    }
+
+    public function updateTicketStatus(): void
+        {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header('Location: ?page=admin_tickets');
+                exit;
+            }
+
+            $ticketId = $_POST['ticket_id'] ??'';
+            $status = $_POST['status'] ??'';
+
+            $allowedStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+
+            if (
+                filter_var($ticketId, FILTER_VALIDATE_INT) === false || 
+                (int) $ticketId <= 0 || 
+                !in_array($status, $allowedStatuses, true)
+            ) {
+                    header('Location: ?page=admin_tickets');
+                    exit;
+            }
+
+            $this->ticketModel->updateStatusForTechnician((int) $ticketId, $status);
+
+            header('Location: ?page=admin_ticket_show&ticket_id=' . (int) $ticketId);
+            exit;
+        }
+
+    public function updateTicketAssignment(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?page=admin_tickets');
+            exit;
+        }
+
+        $ticketId = $_POST['ticket_id'] ?? '';
+        $assignedTo = $_POST['assigned_to'] ?? '';
+
+        if (
+            filter_var($ticketId, FILTER_VALIDATE_INT) === false || 
+            (int) $ticketId <= 0 || 
+            ($assignedTo !== '' && filter_var($assignedTo, FILTER_VALIDATE_INT) === false)
+        ) {
+            header('Location: ?page=admin_tickets');
+            exit;
+        }
+
+        $this->ticketModel->updateAssignmentForAdmin((int) $ticketId, $assignedTo !== '' ? (int) $assignedTo : null);
+
+        header('Location: ?page=admin_ticket_show&ticket_id=' . (int) $ticketId);
+        exit;
+    }
 }

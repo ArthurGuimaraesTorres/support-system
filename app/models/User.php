@@ -112,4 +112,16 @@
                 ':id' => $id
             ]);
         }
+
+        public function findTechnicians(): array
+        {
+            $sql = "SELECT id, name
+                    FROM users
+                    WHERE role = 'technician'
+                    ORDER BY name ASC";
+
+            $stmt = $this->pdo->query($sql);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        }
     }

@@ -8,20 +8,10 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Atendimento do chamado</h1>
+        <h1 class="h3 mb-0">Monitoramento do chamado</h1>
 
         <div class="d-flex gap-2">
-            <?php if ($isUnassigned): ?>
-            <form action="index.php?page=technician_ticket_assign" method="POST">
-                <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
-
-                <button type="submit" class="btn btn-sm btn-success">
-                    Assumir chamado
-                </button>
-            </form>
-            <?php endif; ?>
-
-            <a href="?page=technician_tickets" class="btn btn-outline-secondary btn-sm">
+            <a href="?page=admin_tickets" class="btn btn-outline-secondary btn-sm">
                 Voltar
             </a>
         </div>
@@ -33,30 +23,49 @@
     </div>
     <?php elseif (!empty($ticket)): ?>
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex flex-lg-row justify-content-between align-items-lg-center gap-3">
             <strong>
                 Chamado #<?= (int) $ticket['id'] ?>
             </strong>
 
-            <?php if ($canHandleTicket): ?>
-            <form action="index.php?page=technician_ticket_status_update" method="POST"
-                class="d-flex align-items-center gap-2 mb-0">
-                <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id']; ?>">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-lg-end gap-5">
+                <form action="index.php?page=admin_ticket_assign_update" method="POST"
+                    class="d-flex align-items-center gap-2 mb-0">
+                    <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id']; ?>">
 
-                <label for="status" class="form-label mb-0 small text-muted text-nowrap">Status:</label>
+                    <label for="assigned_to" class="form-label mb-0 small text-muted text-nowrap">Atribuído a:</label>
 
-                <select name="status" id="status" class="form-select form-select-sm w-auto"
-                    data-current="<?= htmlspecialchars($ticket['status'], ENT_QUOTES, 'UTF-8'); ?>"
-                    onchange="if (confirm('Tem certeza que deseja atualizar o status deste chamado?')) { this.form.submit() } else { this.value = this.dataset.current; }">
-                    <?php foreach ($statusLabels as $statusValue => $statusLabel): ?>
-                    <option value="<?= htmlspecialchars($statusValue, ENT_QUOTES, 'UTF-8'); ?>"
-                        <?= $ticket['status'] === $statusValue ? 'selected' : ''; ?>>
-                        <?= htmlspecialchars($statusLabel, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
-            <?php endif; ?>
+                    <select name="assigned_to" id="assigned_to" class="form-select form-select-sm w-auto"
+                        data-current="<?= (int) $ticket['assigned_to']; ?>"
+                        onchange="if (confirm('Tem certeza que deseja atribuir este chamado?')) { this.form.submit() } else { this.value = this.dataset.current; }">
+                        <option value="">Não atribuído</option>
+                        <?php foreach ($technicians as $technician): ?>
+                        <option value="<?= (int) $technician['id']; ?>"
+                            <?= (int) $ticket['assigned_to'] === (int) $technician['id'] ? 'selected' : ''; ?>>
+                            <?= htmlspecialchars($technician['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+
+                <form action="index.php?page=admin_ticket_status_update" method="POST"
+                    class="d-flex align-items-center gap-2 mb-0">
+                    <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id']; ?>">
+
+                    <label for="status" class="form-label mb-0 small text-muted text-nowrap">Status:</label>
+
+                    <select name="status" id="status" class="form-select form-select-sm w-auto"
+                        data-current="<?= htmlspecialchars($ticket['status'], ENT_QUOTES, 'UTF-8'); ?>"
+                        onchange="if (confirm('Tem certeza que deseja atualizar o status deste chamado?')) { this.form.submit() } else { this.value = this.dataset.current; }">
+                        <?php foreach ($statusLabels as $statusValue => $statusLabel): ?>
+                        <option value="<?= htmlspecialchars($statusValue, ENT_QUOTES, 'UTF-8'); ?>"
+                            <?= $ticket['status'] === $statusValue ? 'selected' : ''; ?>>
+                            <?= htmlspecialchars($statusLabel, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
         </div>
 
         <div class="card-body">
@@ -136,34 +145,6 @@
                 </p>
             </div>
             <?php endforeach; ?>
-            <?php endif; ?>
-
-            <hr>
-
-            <?php if ($canHandleTicket): ?>
-            <?php if ($ticket['status'] !== 'closed'): ?>
-            <form action="index.php?page=technician_ticket_reply_store" method="POST">
-                <input type="hidden" name="ticket_id" value="<?= (int) $ticket['id'] ?>">
-
-                <label for="message" class="form-label">Responder chamado</label>
-
-                <div class="d-flex gap-2 align-items-end">
-                    <textarea name="message" id="message" class="form-control" rows="4" required></textarea>
-
-                    <button type="submit" class="btn btn-primary" aria-label="Enviar resposta">
-                        <i class="bi bi-send-fill"></i>
-                    </button>
-                </div>
-            </form>
-            <?php else: ?>
-            <div class="alert alert-secondary m-0 rounded-0 text-center" role="alert">
-                Este chamado foi encerrado e não pode receber novas respostas.
-            </div>
-            <?php endif; ?>
-            <?php elseif ($isUnassigned): ?>
-            <div class="alert alert-warning mb-0">
-                Assuma este chamado para responder.
-            </div>
             <?php endif; ?>
         </div>
     </div>

@@ -134,6 +134,26 @@
             $adminController->updateUserRole();
             break;
 
+        case 'admin_tickets':
+            $authController->requireRole(['admin']);
+            $adminController->tickets();
+            break;
+
+        case 'admin_ticket_show':
+            $authController->requireRole(['admin']);
+            $adminController->showTicket();
+            break;
+
+        case 'admin_ticket_status_update':
+            $authController->requireRole(['admin']);
+            $adminController->updateTicketStatus();
+            break;
+
+        case 'admin_ticket_assign_update':
+            $authController->requireRole(['admin']);
+            $adminController->updateTicketAssignment();
+            break;
+
         default:
             echo "Página não encontrada.";
     }
